@@ -61,24 +61,6 @@ public class SleepTrackerApp {
     }
 }
 
-class SleepAnalysisResult {
-    private String description;
-    private Object result;
-
-    public SleepAnalysisResult(String description, Object result) {
-        this.description = description;
-        this.result = result;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Object getResult() {
-        return result;
-    }
-}
-
 class SleepCountSession implements Function<List<SleepingSession>, SleepAnalysisResult> {
 
     @Override
