@@ -12,10 +12,10 @@ public class NightSleepAnalyzer implements Function<List<SleepingSession>, Sleep
     public SleepAnalysisResult apply(List<SleepingSession> sleepingSessions) {
         List<SleepingSession> sessions = sleepingSessions.stream()
                 .filter(s -> s.endSleep.toLocalDate().equals(s.startSleep.toLocalDate().plusDays(1))
-                        || s.startSleep.isBefore(LocalDateTime.
-                        of(s.startSleep.getYear(), s.startSleep.getMonth(), s.startSleep.getDayOfMonth(), 6, 0))
-                        && s.endSleep.toLocalDate().isBefore(LocalDate.
-                        of(s.startSleep.getYear(), s.startSleep.getMonth(), s.startSleep.getDayOfMonth() + 1)))
+                        || s.startSleep.isBefore(LocalDateTime
+                        .of(s.startSleep.getYear(), s.startSleep.getMonth(), s.startSleep.getDayOfMonth(), 6, 0))
+                        && s.endSleep.toLocalDate().isBefore(LocalDate
+                        .of(s.startSleep.getYear(), s.startSleep.getMonth(), s.startSleep.getDayOfMonth() + 1)))
                 .toList();
 
         LocalDate startDate = sleepingSessions.getFirst().getStartSleep().toLocalDate();
