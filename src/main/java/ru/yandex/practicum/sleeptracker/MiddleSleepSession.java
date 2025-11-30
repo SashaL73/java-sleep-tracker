@@ -8,13 +8,19 @@ public class MiddleSleepSession implements Function<List<SleepingSession>, Sleep
 
     @Override
     public SleepAnalysisResult apply(List<SleepingSession> sleepingSessions) {
-        final long[] i = {0};
-        List<Duration> durations = sleepingSessions.stream()
-                .map(s -> Duration.between(s.startSleep, s.endSleep))
-                .peek(duration -> i[0] = i[0] + Math.toIntExact(duration.toMinutes()))
-                .toList();
-        long middle = i[0] / durations.size();
 
-        return new SleepAnalysisResult("средняя продолжительность сессии в минутах", middle);
+        if (sleepingSessions != null && !sleepingSessions.isEmpty()) {
+            final long[] i = {0};
+            List<Duration> durations = sleepingSessions.stream()
+                    .map(s -> Duration.between(s.startSleep, s.endSleep))
+                    .peek(duration -> i[0] = i[0] + Math.toIntExact(duration.toMinutes()))
+                    .toList();
+            long middle = i[0] / durations.size();
+
+            return new SleepAnalysisResult("средняя продолжительность сессии в минутах", middle);
+        } else {
+            return new SleepAnalysisResult("средняя продолжительность сессии в минутах", "нет данных");
+        }
+
     }
 }

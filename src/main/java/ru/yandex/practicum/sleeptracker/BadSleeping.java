@@ -7,10 +7,14 @@ public class BadSleeping implements Function<List<SleepingSession>, SleepAnalysi
 
     @Override
     public SleepAnalysisResult apply(List<SleepingSession> sleepingSessions) {
-        long count = (sleepingSessions.stream()
-                .filter(s -> s.statusSleeping.equals("BAD"))
-                .count());
 
-        return new SleepAnalysisResult("количество плохих сессий", count);
+        if (sleepingSessions != null && !sleepingSessions.isEmpty()) {
+            long count = (sleepingSessions.stream()
+                    .filter(s -> s.statusSleeping.equals("BAD"))
+                    .count());
+            return new SleepAnalysisResult("количество плохих сессий", count);
+        } else {
+            return new SleepAnalysisResult("количество плохих сессий", "нет данных");
+        }
     }
 }
