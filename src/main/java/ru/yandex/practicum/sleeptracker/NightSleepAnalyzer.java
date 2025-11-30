@@ -2,6 +2,7 @@ package ru.yandex.practicum.sleeptracker;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Period;
 import java.util.List;
 import java.util.function.Function;
@@ -18,13 +19,26 @@ public class NightSleepAnalyzer implements Function<List<SleepingSession>, Sleep
                         .of(s.startSleep.getYear(), s.startSleep.getMonth(), s.startSleep.getDayOfMonth() + 1)))
                 .toList();
 
-        LocalDate startDate = sleepingSessions.getFirst().getStartSleep().toLocalDate();
-        LocalDate endDate = sleepingSessions.getLast().getEndSleep().toLocalDate();
+        LocalDateTime startDate = sleepingSessions.getFirst().getStartSleep();
+        LocalDateTime endDate = sleepingSessions.getLast().getEndSleep();
+        long nightCount = 0;
+        long counterSleepless = 0;
 
-        Period period = Period.between(startDate, endDate);
-        long nightCount = period.getDays();
-        long sleeping = sessions.size();
+        if (sleepingSessions.getFirst().startSleep.toLocalTime().isAfter(LocalTime.of(12, 0))) {
+            Period period = Period.between(startDate.toLocalDate(), endDate.toLocalDate());
+            nightCount = period.getDays();
+        } else if (sleepingSessions.getFirst().startSleep.toLocalTime().isBefore(LocalTime.of(12, 0))) {
+            Period period = Period.between(startDate.toLocalDate().minusDays(1), endDate.toLocalDate());
+            nightCount = period.getDays();
+        }
 
-        return new SleepAnalysisResult("количество бессонных ночей", nightCount - sleeping);
+        if (nightCount >= 1 && (!sessions.isEmpty())) {
+            long sleeping = sessions.size();
+            counterSleepless = nightCount - sleeping;
+        } else {
+            counterSleepless = nightCount;
+        }
+
+        return new SleepAnalysisResult("количество бессонных ночей", counterSleepless);
     }
 }
