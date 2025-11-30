@@ -2,10 +2,8 @@ package ru.yandex.practicum.sleeptracker;
 
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -79,13 +77,7 @@ public class SleepTrackerAppTest {
                 new SleepingSession("04.10.25 22:00", "05.10.25 06:00", "BAD"));
 
         SleepAnalysisResult result = (SleepAnalysisResult) functions.getFunctionList().get(3).apply(s);
-        AtomicInteger d = new AtomicInteger();
-        List<Duration> durations = s.stream()
-                .map(session -> Duration.between(session.startSleep, session.endSleep))
-                .peek(duration -> d.set(Math.toIntExact(duration.toMinutes())))
-                .toList();
-        long middle = d.get() / durations.size();
-
+        long middle = 380;
         assertEquals(middle, result.getResult());
     }
 
@@ -127,8 +119,25 @@ public class SleepTrackerAppTest {
     }
 
     @Test
-    void testUnsleepCountIfTransitionToNextMonth() {
+    void testUnsleepCountIfTransitionToNextMonthAndFirstSessionStartBeforeTwelve() {
         List<SleepingSession> s = List.of(
+                new SleepingSession("29.10.25 10:00", "29.10.25 11:10", "NORMAL"),
+                new SleepingSession("29.10.25 21:00", "30.10.25 05:10", "NORMAL"),
+                new SleepingSession("30.10.25 10:30", "30.10.25 18:30", "GOOD"),
+                new SleepingSession("30.10.25 22:00", "31.10.25 06:50", "NORMAL"),
+                new SleepingSession("31.10.25 23:00", "01.11.25 06:00", "NORMAL"),
+                new SleepingSession("02.11.25 01:00", "02.11.25 06:00", "NORMAL"));
+        long count = 1;
+        SleepAnalysisResult result = (SleepAnalysisResult) functions.getFunctionList().get(5).apply(s);
+        assertEquals(count, result.getResult());
+
+
+    }
+
+    @Test
+    void testUnsleepCountIfTransitionToNextMonthAndFirstSessionStartAfterTwelve() {
+        List<SleepingSession> s = List.of(
+                new SleepingSession("29.10.25 12:10", "29.10.25 15:10", "NORMAL"),
                 new SleepingSession("29.10.25 21:00", "30.10.25 05:10", "NORMAL"),
                 new SleepingSession("30.10.25 10:30", "30.10.25 18:30", "GOOD"),
                 new SleepingSession("30.10.25 22:00", "31.10.25 06:50", "NORMAL"),
@@ -173,7 +182,7 @@ public class SleepTrackerAppTest {
     }
 
     @Test
-    void testUserClassificationPigeon() {
+    void testUserClassificationPigeonIfSameQuantity() {
         List<SleepingSession> s = List.of(
                 new SleepingSession("29.12.25 21:30", "30.12.25 05:10", "NORMAL"),
                 new SleepingSession("30.12.25 10:30", "30.12.25 18:30", "GOOD"),
