@@ -11,8 +11,9 @@ public class UserClassification implements Function<List<SleepingSession>, Sleep
 
     @Override
     public SleepAnalysisResult apply(List<SleepingSession> sleepingSessions) {
-        AtomicInteger count1 = new AtomicInteger();
-        AtomicInteger count2 = new AtomicInteger();
+        AtomicInteger counterOwl = new AtomicInteger();
+        AtomicInteger counterLark = new AtomicInteger();
+        AtomicInteger counterPigeon = new AtomicInteger();
         String userClassification = "";
 
         List<SleepingSession> sessions = sleepingSessions.stream()
@@ -29,22 +30,26 @@ public class UserClassification implements Function<List<SleepingSession>, Sleep
                             && s.endSleep.toLocalTime().isAfter(LocalTime.of(9, 0))
                             || s.startSleep.toLocalTime().isBefore(LocalTime.of(6, 0))
                             && s.endSleep.toLocalTime().isAfter(LocalTime.of(9, 0))) {
-                        count1.getAndIncrement();
+                        counterOwl.getAndIncrement();
                     } else if (s.startSleep.isBefore(LocalDateTime
                             .of(s.startSleep.getYear(), s.startSleep.getMonth(), s.startSleep.getDayOfMonth(), 22, 0))
                             && s.endSleep.isBefore(LocalDateTime
                             .of(s.endSleep.getYear(), s.endSleep.getMonth(), s.endSleep.getDayOfMonth(), 7, 0))) {
-                        count2.getAndIncrement();
+                        counterLark.getAndIncrement();
+                    } else {
+                        counterPigeon.getAndIncrement();
                     }
                 })
                 .toList();
 
-        if (count1.get() == count2.get()) {
+        if (counterPigeon.get() > counterLark.get() && counterPigeon.get() > counterOwl.get()) {
             userClassification = "Голубь";
-        } else if (count1.get() > count2.get()) {
-            userClassification = "Сова";
-        } else if (count2.get() > count1.get()) {
+        } else if (counterOwl.get() == counterLark.get()) {
+            userClassification = "Голубь";
+        } else if (counterLark.get() > counterOwl.get()) {
             userClassification = "Жаворонок";
+        } else if (counterOwl.get() > counterLark.get()) {
+            userClassification = "Сова";
         }
 
         return new SleepAnalysisResult("Вы", userClassification);
